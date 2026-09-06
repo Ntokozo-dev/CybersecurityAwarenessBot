@@ -1,2 +1,9 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using System;
+
+namespace CybersecurityAwarenessBot;
+
+static void Main(String[] args)
+{
+    Chatbot bot = new Chatbot();
+    bot.Start();
+}
