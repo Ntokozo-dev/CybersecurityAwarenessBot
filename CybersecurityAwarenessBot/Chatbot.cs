@@ -1,13 +1,13 @@
 ﻿using System;
 
 namespace CybersecurityAwarenessBot
-{
+{ 
+    
     public class Chatbot
     {
-        //automatic properties
-        public string BotName { get; set; }
         public string? UserName { get; set; }
         public string CurrentTopic { get; set; }
+        public string BotName { get; set; }
         public void Start()
         {
             //play voice greeting
@@ -16,26 +16,29 @@ namespace CybersecurityAwarenessBot
             //Display ASII art
             AsciiArt art = new AsciiArt();
             art.DisplayLogo();
-        }
-        
 
-        
+            StartConversation();
+        }
         //method to run conversation
         public void StartConversation()
-        { 
+        {
             //Ask user name
+            UserProfile User = new UserProfile();
+
             Console.WriteLine("Please enter your name: ");
             string name = Console.ReadLine();
             //validate the name
-            while (string.IsNullOrWhiteSpace(name))
+            while (!User.SetName(name))
             {
                 Console.WriteLine(": I did not catch your name. Please enter your name so I can \r\npersonalise the conversation.");
                 name = Console.ReadLine();
 
             }
+            UserName = User.Name;
             //display personalised welcome
-            Console.WriteLine($"Welcome {name}!I'm your Cybersecurity Awareness Assistant. ");
-            //Ask what the user wants to know
+            Console.WriteLine($"Welcome {User.Name}!I'm your Cybersecurity Awareness Assistant. ");
+        
+            //response system
 
             ResponseHandler responseHandler = new ResponseHandler();
             string query = "";//start loop, read and validate the question 
