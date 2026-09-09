@@ -13,14 +13,17 @@ namespace CybersecurityAwarenessBot
             //play voice greeting
             VoiceGreeting greeting = new VoiceGreeting();
             greeting.PlayGreeting();
-
+            //Display ASII art
+            AsciiArt art = new AsciiArt();
+            art.DisplayLogo();
         }
-        //Display ASII art
+        
 
-        //Ask user name
+        
         //method to run conversation
         public void StartConversation()
-        {
+        { 
+            //Ask user name
             Console.WriteLine("Please enter your name: ");
             string name = Console.ReadLine();
             //validate the name
