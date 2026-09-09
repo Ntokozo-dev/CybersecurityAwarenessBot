@@ -7,4 +7,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <None Remove="Audio\greeting.wav" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Audio\greeting.wav">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Windows.Extensions" Version="10.0.11" />
+  </ItemGroup>
+
 </Project>
