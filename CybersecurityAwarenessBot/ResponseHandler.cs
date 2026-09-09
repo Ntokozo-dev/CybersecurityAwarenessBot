@@ -22,6 +22,11 @@ namespace CybersecurityAwarenessBot
             {
                 return "Only visit trusted websites, check that the URL is correct, and avoid clicking suspicious links.";
             }
+            else if (userInput.Contains("purpose"))
+                return "I was created to help provide you with safe digital practices.";
+
+            else if (userInput.Contains("how are you"))
+                return "I'm well, thank you for asking. I hope you are well too.";
             //otherwise return a default response
             else
             {
