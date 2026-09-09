@@ -16,7 +16,7 @@ namespace CybersecurityAwarenessBot
         //sets the name only it passes basic validation
         public bool SetName(string inputName)
         {
-             if (string.IsNullOrWhiteSpace(Name))
+             if (string.IsNullOrWhiteSpace(inputName))
             {
                 return false;
             }
