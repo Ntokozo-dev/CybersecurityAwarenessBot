@@ -2,8 +2,12 @@
 
 namespace CybersecurityAwarenessBot;
 
-static void Main(String[] args)
+public class Program
 {
-    Chatbot bot = new Chatbot();
-    bot.Start();
+    static void Main(String[] args)
+    {
+        Chatbot bot = new Chatbot();
+        bot.Start();
+        bot.StartConversation();
+    }
 }
