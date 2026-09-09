@@ -1,12 +1,28 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace CybersecurityAwarenessBot
 {
-    internal class UserProfile
+    public class UserProfile
     {
+        // automatic property to store the user's name
+        public string Name { get; set; } = "";
+
+        //returns true once a real(not empty) name has been set
+        public bool HasName()
+        {
+            return !string.IsNullOrWhiteSpace(Name);
+        }
+        //sets the name only it passes basic validation
+        public bool SetName(string inputName)
+        {
+             if (string.IsNullOrWhiteSpace(Name))
+            {
+                return false;
+            }
+            Name = inputName.Trim();
+            return true;
+        }
+        
     }
 }
