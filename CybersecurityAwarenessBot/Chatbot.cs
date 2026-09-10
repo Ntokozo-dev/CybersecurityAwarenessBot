@@ -25,13 +25,19 @@ namespace CybersecurityAwarenessBot
             //Ask user name
             UserProfile User = new UserProfile();
 
-            Console.WriteLine("Please enter your name: ");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("What is your name? ");
+            Console.ForegroundColor = ConsoleColor.White;
             string name = Console.ReadLine();
+            Console.ForegroundColor = ConsoleColor.Green;
             //validate the name
             while (!User.SetName(name))
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(": I did not catch your name. Please enter your name so I can \r\npersonalise the conversation.");
+                Console.ForegroundColor = ConsoleColor.White;
                 name = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Green;
 
             }
             UserName = User.Name;
@@ -44,6 +50,7 @@ namespace CybersecurityAwarenessBot
             string query = "";//start loop, read and validate the question 
             while (query != "exit")
             {
+                Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=====================================================================");
                 Console.WriteLine("Enter a topic:");
                 Console.WriteLine("1. Password");
@@ -52,7 +59,9 @@ namespace CybersecurityAwarenessBot
                 Console.WriteLine("Type exit to leave the program.");
                 Console.WriteLine("=====================================================================");
 
+                Console.ForegroundColor = ConsoleColor.White;
                 query = Console.ReadLine();
+                Console.ForegroundColor = ConsoleColor.Green;
 
                 while (string.IsNullOrWhiteSpace(query))
                 {
@@ -61,29 +70,6 @@ namespace CybersecurityAwarenessBot
                 }
                 query = query.Trim().ToLower();
 
-                //error-handling invalid numeric choice using TryParse
-                if (int.TryParse(query, out int choice))
-
-                {
-                    // it WAS a valid whole number — now check if it's in range
-                    if (choice == 1)
-                    {
-                        query = "password";
-                    }
-                    else if (choice == 2)
-                    {
-                        query = "phishing";
-                    }
-                    else if (choice == 3)
-                    {
-                        query = "safe browsing";
-                    }
-                    else
-                    {
-                        Console.WriteLine("Please enter a number between 1-3.");
-                        continue; // skips the rest of this loop pass, goes straight back to asking
-                    }
-                }
                     if (query == "exit")
                     {
                         Console.WriteLine("Goodbye! Stay safe online.");
@@ -91,7 +77,9 @@ namespace CybersecurityAwarenessBot
                     }
                     string response = responseHandler.GetResponse(query);
                     Console.WriteLine(response);
-                }
             }
+            Console.ResetColor();
+        }
+       
         }
     }
