@@ -3,16 +3,18 @@
 Name: Ntokozo Mtsali
 Student Number:st10498443
 ## Project Description
-The cybersecurity awareness virtual assistant(chatbot): It is all about educating citizens on identifying and mitigating cyber threats. The chat bot interacts with users in a conversational manner.
+A C# console-based cybersecurity awareness chatbot that educates users on identifying and mitigating common cyber threats. The bot greets the user with a voice recording and ASCII art header, asks for their name, and then holds a conversation where the user can ask about password safety, phishing, and safe browsing, as well as general questions about the bot itself.
 ## Features
-- Voice greeting
-- ASCII art
-- Personalised greeting
+- Voice greeting (plays on startup using System.Media.SoundPlayer)
+- ASCII art cybersecurity-themed header
+- Personalised greeting using the user's name
 - Password safety responses
 - Phishing responses
 - Safe browsing responses
-- Input validation
-- Coloured console interface
+- "How are you?" and "What is your purpose?" responses
+- Input validation (blank name and blank query handling)
+- Coloured console interface (cyan for menus/headers, green for bot replies, white for user input, yellow for warnings)
+- Code organised into separate classes: Program, Chatbot, VoiceGreeting, AsciiArt, ResponseHandler, UserProfile
 ## How to Run
 1. Clone/download the repository.
 2. Open the solution in Visual Studio.
@@ -20,9 +22,9 @@ The cybersecurity awareness virtual assistant(chatbot): It is all about educatin
 4. Build the project.
 5. Press Ctrl + F5.
 ## Requirements
-- Visual Studio
-- Correct .NET version
-- Windows audio support where required
+- Visual Studio 2022
+- .NET 8.0
+- Windows (for audio playback via System.Media)
 ## GitHub Actions
 Add your successful CI screenshot here.
 ## Video Presentation
