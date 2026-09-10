@@ -27,6 +27,6 @@ A C# console-based cybersecurity awareness chatbot that educates users on identi
 - Windows (for audio playback via System.Media)
 
 ## GitHub Actions
-![CI Success](https://github.com/Ntokozo-dev/CybersecurityAwarenessBot/upload/main)
+![CI Success](https://Github_CI-success.png)
 ## Video Presentation
 Unlisted YouTube link:
