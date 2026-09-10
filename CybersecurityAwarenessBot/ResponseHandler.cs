@@ -27,9 +27,15 @@ namespace CybersecurityAwarenessBot
 
             else if (userInput.Contains("how are you"))
                 return "I'm well, thank you for asking. I hope you are well too.";
+        
+            else if (userInput.Contains("what can i ask"))
+            {
+                return "You can ask me about password safety, phishing, and safe browsing. You can also ask how I am or what my purpose is.";
+            }
             //otherwise return a default response
             else
             {
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 return "I'm not sure I understand. Please choose a topic such as password, phishing, or safe browsing.";
             }
         }
