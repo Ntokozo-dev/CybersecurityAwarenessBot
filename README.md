@@ -25,7 +25,8 @@ A C# console-based cybersecurity awareness chatbot that educates users on identi
 - Visual Studio 2022
 - .NET 8.0
 - Windows (for audio playback via System.Media)
+
 ## GitHub Actions
-Add your successful CI screenshot here.
+![CI Success](screenshots/Github_CI-success.png)
 ## Video Presentation
 Unlisted YouTube link:
