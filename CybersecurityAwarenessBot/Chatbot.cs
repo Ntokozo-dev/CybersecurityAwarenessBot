@@ -52,10 +52,11 @@ namespace CybersecurityAwarenessBot
             {
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("=====================================================================");
-                Console.WriteLine("Enter a topic:");
+                Console.WriteLine("What you can ask me:");
                 Console.WriteLine("1. Password");
                 Console.WriteLine("2. Phishing");
                 Console.WriteLine("3. Safe Browsing");
+                Console.WriteLine("4. Purpose");
                 Console.WriteLine("Type exit to leave the program.");
                 Console.WriteLine("=====================================================================");
 
@@ -65,7 +66,8 @@ namespace CybersecurityAwarenessBot
 
                 while (string.IsNullOrWhiteSpace(query))
                 {
-                    Console.WriteLine("Query cannot be empty. Please enter a topic.");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("I didn’t quite understand that. Could you rephrase?");
                     query = Console.ReadLine();
                 }
                 query = query.Trim().ToLower();
