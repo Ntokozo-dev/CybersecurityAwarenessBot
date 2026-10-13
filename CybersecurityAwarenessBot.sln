@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36915.13 d17.14
+VisualStudioVersion = 17.14.36915.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CybersecurityAwarenessBot", "CybersecurityAwarenessBot\CybersecurityAwarenessBot.csproj", "{113C64BD-3D56-4ACF-A147-2AED88600D79}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CybersecurityAwarenessChatbotGUI", "CybersecurityAwarenessChatbotGUI\CybersecurityAwarenessChatbotGUI\CybersecurityAwarenessChatbotGUI.csproj", "{DBAF061A-F0F3-B16E-5B3E-7ACEF7974AD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{113C64BD-3D56-4ACF-A147-2AED88600D79}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{113C64BD-3D56-4ACF-A147-2AED88600D79}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{113C64BD-3D56-4ACF-A147-2AED88600D79}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBAF061A-F0F3-B16E-5B3E-7ACEF7974AD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAF061A-F0F3-B16E-5B3E-7ACEF7974AD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAF061A-F0F3-B16E-5B3E-7ACEF7974AD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAF061A-F0F3-B16E-5B3E-7ACEF7974AD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
