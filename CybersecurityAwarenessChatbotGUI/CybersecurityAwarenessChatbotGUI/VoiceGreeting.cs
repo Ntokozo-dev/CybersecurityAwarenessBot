@@ -15,15 +15,18 @@ namespace CybersecurityAwarenessChatbotGUI
             if (File.Exists(baseDir))
             {
                 Console.WriteLine("The file exists.");
+
+                //Create a SoundPlayer
+                SoundPlayer playSound = new SoundPlayer(baseDir);
+
+                //Play the sound method
+                playSound.Play();
             }
             else
             {
                 Console.WriteLine("The file does not exist.");
             }
-                //Create a SoundPlayer
-                SoundPlayer playSound = new SoundPlayer(baseDir);
-            //Play the sound method
-            playSound.PlaySync();
+           
         }
     }
 }
