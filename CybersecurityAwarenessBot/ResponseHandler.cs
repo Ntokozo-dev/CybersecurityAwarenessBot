@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace CybersecurityAwarenessBot
+namespace CybersecurityAwarenessChatbotGUI
 {
     public class ResponseHandler
     {

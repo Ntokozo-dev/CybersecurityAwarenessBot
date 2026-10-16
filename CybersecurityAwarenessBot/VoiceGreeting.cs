@@ -3,7 +3,7 @@ using System.IO;
 using System.Media;
 
 
-namespace CybersecurityAwarenessBot
+namespace CybersecurityAwarenessChatbotGUI
 {
     public class VoiceGreeting
     {
