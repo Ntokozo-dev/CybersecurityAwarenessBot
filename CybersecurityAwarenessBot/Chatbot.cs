@@ -1,4 +1,5 @@
 ﻿using System;
+using CybersecurityAwarenessChatbotGUI;
 
 namespace CybersecurityAwarenessBot
 { 
@@ -15,7 +16,7 @@ namespace CybersecurityAwarenessBot
             greeting.PlayGreeting();
             //Display ASII art
             AsciiArt art = new AsciiArt();
-            art.DisplayLogo();
+            Console.WriteLine(art.GetLogo());
 
             StartConversation();
         }
