@@ -8,6 +8,8 @@ namespace CybersecurityAwarenessChatbotGUI
         // automatic property to store the user's name
         public string Name { get; set; } = "";
 
+        public UserProfile() { }
+
         //returns true once a real(not empty) name has been set
         public bool HasName()
         {
