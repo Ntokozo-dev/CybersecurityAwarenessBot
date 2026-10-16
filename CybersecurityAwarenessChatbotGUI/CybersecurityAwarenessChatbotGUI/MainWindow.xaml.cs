@@ -26,32 +26,36 @@ namespace CybersecurityAwarenessChatbotGUI
 
             //subscribe: run MainWindow_Loaded once the window has finished loading.
             Loaded += MainWindow_Loaded;
+
+
         }
         private void MainWindow_Loaded(object sender, RoutedEventArgs e)
-        { 
+
+
+        {
 
             // Play the voice greeting once, when the window first opens.
             VoiceGreeting greeting = new VoiceGreeting();
             greeting.PlayGreeting();
 
             AsciiArt art = new AsciiArt();
-            ConversationBox.Text += art.GetLogo() + "\n";
+            rtbBanner.AppendText(art.GetLogo() + "\n");
 
             // Print the bot's opening lines into the conversation box.
-            ConversationBox.Text += "Bot: Welcome to the Cybersecurity Awareness Bot!\n";
-            ConversationBox.Text += "Bot: What is your name?\n";
+            AppendToChat("Bot: Welcome to the Cybersecurity Awareness Bot!\n");
+            AppendToChat("Bot: What is your name?\n");
         }
 
 
         // Runs every time the Send button is clicked.
-        private void SendButton_Click(object sender, RoutedEventArgs e)
+        private void btnSend_Click(object sender, RoutedEventArgs e)
         {
             // Grab whatever the user typed.
-            string input = InputBox.Text;
+            string input = txtUserInput.Text;
 
             // Show the user's own message first, so both sides of the
             // conversation are visible.
-            ConversationBox.Text += "You: " + input + "\n";
+            AppendToChat("You: " + input + "\n");
 
             if (waitingForName)
             {
@@ -62,24 +66,32 @@ namespace CybersecurityAwarenessChatbotGUI
                 if (nameAccepted)
                 {
                     // Valid name: greet them and move to the next stage.
-                    ConversationBox.Text += $"Bot: Nice to meet you, {user.Name}! Ask me anything about cybersecurity.\n";
+                    AppendToChat ($"Bot: Nice to meet you, {user.Name}! Ask me anything about cybersecurity.\n");
                     waitingForName = false;
                 }
                 else
                 {
                     // Blank/invalid name: ask again, stay in this stage.
-                    ConversationBox.Text += "Bot: I didn't catch that. Please enter your name.\n";
+                    AppendToChat("Bot: I didn't catch that. Please enter your name.\n");
                 }
             }
             else
             {
                 // Already have a name — treat input as a cybersecurity topic.
                 string response = responseHandler.GetResponse(input);
-                ConversationBox.Text += "Bot: " + response + "\n";
+                AppendToChat("Bot: " + response + "\n");
             }
 
             // Clear the input box, ready for the next message.
-            InputBox.Clear();
+            txtUserInput.Clear();
+        }
+    
+        //Adds text to the chat window and keeps the newest message in view.
+    private void AppendToChat(string message)
+        {
+            rtbChatHistory.AppendText(message);
+            rtbChatHistory.ScrollToEnd();
+
         }
     }
 }
