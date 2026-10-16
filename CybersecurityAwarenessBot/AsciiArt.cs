@@ -1,29 +1,27 @@
-﻿using System;
+﻿using System.Text;
 
-
-namespace CybersecurityAwarenessBot
+namespace CybersecurityAwarenessChatbotGUI
 {
     public class AsciiArt
     {
-        public void DisplayLogo()
+        public string GetLogo()
         {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine("============================================");
-            Console.WriteLine("     CYBERSECURITY AWARENESS BOT            ");
-            Console.WriteLine("============================================");
-            Console.WriteLine("                   .-----.                  ");
-            Console.WriteLine("                  /  ___  \\                ");
-            Console.WriteLine("                 |  /   \\  |                ");
-            Console.WriteLine("                 | |     | |                ");
-            Console.WriteLine("                 |  \\___/  |                ");
-            Console.WriteLine("                 |---------|                ");
-            Console.WriteLine("                 |  #####  |                ");
-            Console.WriteLine("                 |  #####  |                ");
-            Console.WriteLine("                 '---------'                ");
-            Console.WriteLine("       [ ENCRYPTED ]  [ FIREWALL ]  [ SAFE ]");
-            Console.WriteLine("============================================");
-
-            Console.ResetColor();
+            StringBuilder logo = new StringBuilder();
+            logo.AppendLine("============================================");
+            logo.AppendLine("     CYBERSECURITY AWARENESS BOT            ");
+            logo.AppendLine("============================================");
+            logo.AppendLine("                   .-----.                  ");
+            logo.AppendLine("                  /  ___  \\                ");
+            logo.AppendLine("                 |  /   \\  |                ");
+            logo.AppendLine("                 | |     | |                ");
+            logo.AppendLine("                 |  \\___/  |                ");
+            logo.AppendLine("                 |---------|                ");
+            logo.AppendLine("                 |  #####  |                ");
+            logo.AppendLine("                 |  #####  |                ");
+            logo.AppendLine("                 '---------'                ");
+            logo.AppendLine("       [ ENCRYPTED ]  [ FIREWALL ]  [ SAFE ]");
+            logo.AppendLine("============================================");
+            return logo.ToString();
         }
     }
 }
