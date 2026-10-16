@@ -5,8 +5,90 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CybersecurityAwarenessChatbotGUI"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="Cybersecurity Awareness Bot" Height="700" Width="700"
+        WindowStartupLocation="CenterScreen"
+        Background="#0B0F14">
+
+    <!-- One Grid divides the window into 5 horizontal rows. -->
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <!-- 0: lblTitle -->
+            <RowDefinition Height="Auto"/>
+            <!-- 1: rtbBanner (ASCII art) -->
+            <RowDefinition Height="*"/>
+            <!-- 2: rtbChatHistory (fills the space left) -->
+            <RowDefinition Height="Auto"/>
+            <!-- 3: lblStatus (hint) -->
+            <RowDefinition Height="Auto"/>
+            <!-- 4: input bar -->
+        </Grid.RowDefinitions>
+
+        <!-- Row 0: Title -->
+        <Label x:Name="lblTitle" Grid.Row="0"
+               Content="Cybersecurity Awareness Chatbot"
+               Foreground="Cyan" FontFamily="Consolas"
+               FontSize="22" FontWeight="Bold"
+               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+
+        <!-- Row 1: ASCII banner. The Paragraph style removes the gap WPF
+             adds between lines, which was stretching the art. -->
+        <RichTextBox x:Name="rtbBanner" Grid.Row="1"
+                     IsReadOnly="True" Height="240"
+                     VerticalScrollBarVisibility="Auto"
+                     Background="#05080C" Foreground="Cyan"
+                     FontFamily="Consolas" FontSize="11"
+                     BorderBrush="#1F6F5C" BorderThickness="1"
+                     Margin="10,5,10,5">
+            <RichTextBox.Resources>
+                <Style TargetType="Paragraph">
+                    <Setter Property="Margin" Value="0"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
+
+        <!-- Row 2: Conversation history -->
+        <RichTextBox x:Name="rtbChatHistory" Grid.Row="2"
+                     IsReadOnly="True" IsTabStop="False"
+                     VerticalScrollBarVisibility="Auto"
+                     Background="#05080C" Foreground="LightGreen"
+                     FontFamily="Consolas" FontSize="14"
+                     BorderBrush="#1F6F5C" BorderThickness="1"
+                     Padding="6" Margin="10,5,10,5">
+            <RichTextBox.Resources>
+                <Style TargetType="Paragraph">
+                    <Setter Property="Margin" Value="0,0,0,2"/>
+                </Style>
+            </RichTextBox.Resources>
+        </RichTextBox>
+
+        <!-- Row 3: Status / help hint -->
+        <Label x:Name="lblStatus" Grid.Row="3"
+               Content="Ask me about passwords, scams, or privacy."
+               Foreground="Yellow" FontFamily="Consolas"
+               HorizontalAlignment="Center"/>
+
+        <!-- Row 4: Input box and Send button side by side -->
+        <Grid Grid.Row="4" Margin="10,0,10,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBox x:Name="txtUserInput" Grid.Column="0"
+                     Background="#05080C" Foreground="LightGreen"
+                     CaretBrush="LightGreen"
+                     FontFamily="Consolas" FontSize="14"
+                     BorderBrush="#1F6F5C" Padding="6"
+                     VerticalContentAlignment="Center"/>
+
+            <Button x:Name="btnSend" Grid.Column="1" Content="Send"
+                    Width="90" Margin="8,0,0,0"
+                    Background="#12303A" Foreground="Cyan"
+                    BorderBrush="#1F6F5C"
+                    FontFamily="Consolas" FontWeight="Bold"
+                    IsDefault="True" Click="btnSend_Click"/>
+        </Grid>
 
     </Grid>
 </Window>
