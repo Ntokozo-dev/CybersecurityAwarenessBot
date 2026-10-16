@@ -1,10 +1,12 @@
 ﻿using System;
 
 
-namespace CybersecurityAwarenessBot
+namespace CybersecurityAwarenessChatbotGUI
 {
-    public class UserProfile
+    internal class UserProfile
     {
+        public UserProfile()
+        {
         // automatic property to store the user's name
         public string Name { get; set; } = "";
 
