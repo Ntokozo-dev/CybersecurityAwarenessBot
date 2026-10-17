@@ -46,7 +46,7 @@ namespace CybersecurityAwarenessChatbotGUI
 
             // ASCII art goes in the banner box.
             AsciiArt art = new AsciiArt();
-            rtbBanner.AppendText(art.GetLogo());
+            tbBanner.Text = art.GetLogo();
 
             // Remove the empty paragraph a new RichTextBox starts with, so the chat begins at the top.
             rtbChatHistory.Document.Blocks.Clear();

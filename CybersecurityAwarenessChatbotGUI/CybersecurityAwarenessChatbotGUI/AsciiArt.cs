@@ -7,9 +7,7 @@ namespace CybersecurityAwarenessChatbotGUI
         public string GetLogo()
         {
             StringBuilder logo = new StringBuilder();
-            logo.AppendLine("============================================");
-            logo.AppendLine("     CYBERSECURITY AWARENESS BOT            ");
-            logo.AppendLine("============================================");
+            logo.AppendLine("                                            ");
             logo.AppendLine("                   .-----.                  ");
             logo.AppendLine("                  /  ___  \\                ");
             logo.AppendLine("                 |  /   \\  |                ");
@@ -20,7 +18,7 @@ namespace CybersecurityAwarenessChatbotGUI
             logo.AppendLine("                 |  #####  |                ");
             logo.AppendLine("                 '---------'                ");
             logo.AppendLine("       [ ENCRYPTED ]  [ FIREWALL ]  [ SAFE ]");
-            logo.AppendLine("============================================");
+            logo.AppendLine("                                            ");
             return logo.ToString();
         }
     }
