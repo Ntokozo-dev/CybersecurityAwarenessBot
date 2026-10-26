@@ -165,3 +165,4 @@ CybersecurityAwarenessBot/
 | `v2.3-final` | Ascii banner editing
 
 ## Video Presentation Link
+https://youtu.be/8VRtIs2E8Ts?si=8bwCmUAZiUA-MBZ9
