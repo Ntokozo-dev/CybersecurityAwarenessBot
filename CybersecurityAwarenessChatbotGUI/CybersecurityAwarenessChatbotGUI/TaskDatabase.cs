@@ -29,10 +29,10 @@ namespace CybersecurityAwarenessChatbotGUI
         }
 
 
-                    // Reads every row from the tasks table and returns them as a list
-                    // of CyberTask objects, so the rest of the program can work with
-                    // them as normal C# objects instead of raw database rows.
-public List<CyberTask> GetAllTasks()
+        // Reads every row from the tasks table and returns them as a list
+        // of CyberTask objects, so the rest of the program can work with
+        // them as normal C# objects instead of raw database rows.
+        public List<CyberTask> GetAllTasks()
         {
             // This list will hold all the tasks we read from the database.
             List<CyberTask> tasks = new List<CyberTask>();
@@ -84,5 +84,37 @@ public List<CyberTask> GetAllTasks()
             // Hand back the full list of tasks once we've read every row.
             return tasks;
         }
+
+            // Marks a specific task as completed, identified by its TaskId.
+public void CompleteTask(int taskId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "UPDATE tasks SET IsCompleted = TRUE WHERE TaskId = @id";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", taskId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        // Permanently removes a task from the database, identified by its TaskId.
+        public void DeleteTask(int taskId)
+        {
+            using (MySqlConnection conn = new MySqlConnection(connectionString))
+            {
+                conn.Open();
+                string query = "DELETE FROM tasks WHERE TaskId = @id";
+
+                using (MySqlCommand cmd = new MySqlCommand(query, conn))
+                {
+                    cmd.Parameters.AddWithValue("@id", taskId);
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
     }
-}
+ }

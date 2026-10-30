@@ -29,18 +29,7 @@ namespace CybersecurityAwarenessChatbotGUI
             // Builds the window from the XAML (auto-generated step).
             InitializeComponent();
 
-            // --- TEMPORARY TEST CODE ---
-            TaskDatabase db = new TaskDatabase();
-            List<CyberTask> allTasks = db.GetAllTasks();
-
-            string result = $"Found {allTasks.Count} task(s):\n\n";
-            foreach (CyberTask task in allTasks)
-            {
-                result += $"ID: {task.TaskId}, Title: {task.Title}, Completed: {task.IsCompleted}\n";
-            }
-
-            MessageBox.Show(result);
-            // --- END TEMPORARY TEST CODE ---
+        
 
             // DELEGATE in use: we plug our DisplayBotMessage method into the chatbot.
             // When the chatbot has a reply, it calls this method without needing to know
