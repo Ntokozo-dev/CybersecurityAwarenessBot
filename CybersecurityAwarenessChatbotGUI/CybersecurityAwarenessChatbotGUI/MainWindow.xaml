@@ -9,72 +9,125 @@
         WindowStartupLocation="CenterScreen"
         Background="#0B0F14">
 
-    <!-- One Grid divides the window into 5 horizontal rows. -->
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <!-- 0: lblTitle -->
-            <RowDefinition Height="Auto"/>
-            <!-- 1: rtbBanner (ASCII art) -->
-            <RowDefinition Height="*"/>
-            <!-- 2: rtbChatHistory (fills the space left) -->
-            <RowDefinition Height="Auto"/>
-            <!-- 3: input bar -->
-        </Grid.RowDefinitions>
+    <TabControl Background="#0B0F14">
 
-        <!-- Row 0: Title -->
-        <Label x:Name="lblTitle" Grid.Row="0"
-               Content="Cybersecurity Awareness Chatbot"
-               Foreground="Cyan" FontFamily="Consolas"
-               FontSize="22" FontWeight="Bold"
-               HorizontalAlignment="Center" Margin="0,10,0,0"/>
+        <!-- TAB 1: chat interface -->
+        <TabItem Header="Chat">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
 
-        <!-- Row 1: ASCII banner. -->
-        <Border Grid.Row="1" Margin="0,5,0,5" Padding="0,8"
-        Background="#05080C" BorderBrush="Cyan"
-        BorderThickness="0,1,0,1">
-            <TextBlock x:Name="tbBanner"
-               HorizontalAlignment="Center"
-               FontFamily="Consolas" FontSize="15"
-               Foreground="Cyan"/>
-        </Border>
+                <Label x:Name="lblTitle" Grid.Row="0"
+                       Content="Cybersecurity Awareness Chatbot"
+                       Foreground="Cyan" FontFamily="Consolas"
+                       FontSize="22" FontWeight="Bold"
+                       HorizontalAlignment="Center" Margin="0,10,0,0"/>
 
-        <!-- Row 2: Conversation history -->
-        <RichTextBox x:Name="rtbChatHistory" Grid.Row="2"
-                     IsReadOnly="True" IsTabStop="False"
-                     VerticalScrollBarVisibility="Auto"
-                     Background="#05080C" Foreground="LightGreen"
-                     FontFamily="Consolas" FontSize="14"
-                     BorderBrush="#1F6F5C" BorderThickness="1"
-                     Padding="6" Margin="10,5,10,5">
-            <RichTextBox.Resources>
-                <Style TargetType="Paragraph">
-                    <Setter Property="Margin" Value="0,0,0,2"/>
-                </Style>
-            </RichTextBox.Resources>
-        </RichTextBox>
+                <Border Grid.Row="1" Margin="0,5,0,5" Padding="0,8"
+                        Background="#05080C" BorderBrush="Cyan"
+                        BorderThickness="0,1,0,1">
+                    <TextBlock x:Name="tbBanner"
+                               HorizontalAlignment="Center"
+                               FontFamily="Consolas" FontSize="15"
+                               Foreground="Cyan"/>
+                </Border>
 
-        <!-- Row 3: Input box and Send button side by side -->
-        <Grid Grid.Row="4" Margin="10,0,10,10">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="Auto"/>
-            </Grid.ColumnDefinitions>
+                <RichTextBox x:Name="rtbChatHistory" Grid.Row="2"
+                             IsReadOnly="True" IsTabStop="False"
+                             VerticalScrollBarVisibility="Auto"
+                             Background="#05080C" Foreground="LightGreen"
+                             FontFamily="Consolas" FontSize="14"
+                             BorderBrush="#1F6F5C" BorderThickness="1"
+                             Padding="6" Margin="10,5,10,5">
+                    <RichTextBox.Resources>
+                        <Style TargetType="Paragraph">
+                            <Setter Property="Margin" Value="0,0,0,2"/>
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
 
-            <TextBox x:Name="txtUserInput" Grid.Column="0"
-                     Background="#05080C" Foreground="LightGreen"
-                     CaretBrush="LightGreen"
-                     FontFamily="Consolas" FontSize="14"
-                     BorderBrush="#1F6F5C" Padding="6"
-                     VerticalContentAlignment="Center"/>
+                <Grid Grid.Row="3" Margin="10,0,10,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
 
-            <Button x:Name="btnSend" Grid.Column="1" Content="Send"
-                    Width="90" Margin="8,0,0,0"
-                    Background="#12303A" Foreground="Cyan"
-                    BorderBrush="#1F6F5C"
-                    FontFamily="Consolas" FontWeight="Bold"
-                    IsDefault="True" Click="btnSend_Click"/>
-        </Grid>
+                    <TextBox x:Name="txtUserInput" Grid.Column="0"
+                             Background="#05080C" Foreground="LightGreen"
+                             CaretBrush="LightGreen"
+                             FontFamily="Consolas" FontSize="14"
+                             BorderBrush="#1F6F5C" Padding="6"
+                             VerticalContentAlignment="Center"/>
 
-    </Grid>
+                    <Button x:Name="btnSend" Grid.Column="1" Content="Send"
+                            Width="90" Margin="8,0,0,0"
+                            Background="#12303A" Foreground="Cyan"
+                            BorderBrush="#1F6F5C"
+                            FontFamily="Consolas" FontWeight="Bold"
+                            IsDefault="True" Click="btnSend_Click"/>
+                </Grid>
+            </Grid>
+        </TabItem>
+
+        <!-- TAB 2: Task Assistant -->
+        <TabItem Header="Tasks">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- input fields -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Add button -->
+                    <RowDefinition Height="*"/>
+                    <!-- task list -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- Complete/Delete buttons -->
+                </Grid.RowDefinitions>
+
+                <!-- Row 0: input fields for a new task -->
+                <StackPanel Grid.Row="0" Margin="0,0,0,10">
+                    <TextBlock Text="Title:" Foreground="Cyan" FontFamily="Consolas"/>
+                    <TextBox x:Name="txtTaskTitle" Background="#05080C" Foreground="LightGreen"
+                     CaretBrush="LightGreen" FontFamily="Consolas" Padding="4" Margin="0,2,0,6"/>
+
+                    <TextBlock Text="Description:" Foreground="Cyan" FontFamily="Consolas"/>
+                    <TextBox x:Name="txtTaskDescription" Background="#05080C" Foreground="LightGreen"
+                     CaretBrush="LightGreen" FontFamily="Consolas" Padding="4" Margin="0,2,0,6"/>
+
+                    <TextBlock Text="Reminder (optional, e.g. 2026-10-15):" Foreground="Cyan" FontFamily="Consolas"/>
+                    <TextBox x:Name="txtTaskReminder" Background="#05080C" Foreground="LightGreen"
+                     CaretBrush="LightGreen" FontFamily="Consolas" Padding="4" Margin="0,2,0,6"/>
+                </StackPanel>
+
+                <!-- Row 1: Add Task button -->
+                <Button x:Name="btnAddTask" Grid.Row="1" Content="Add Task"
+                Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                FontFamily="Consolas" FontWeight="Bold" Padding="6"
+                HorizontalAlignment="Left" Margin="0,0,0,10"
+                Click="btnAddTask_Click"/>
+
+                <!-- Row 2: list of existing tasks -->
+                <ListBox x:Name="lstTasks" Grid.Row="2"
+                 Background="#05080C" Foreground="LightGreen"
+                 FontFamily="Consolas" BorderBrush="#1F6F5C"
+                 Margin="0,0,0,10"/>
+
+                <!-- Row 3: Complete / Delete buttons for the selected task -->
+                <StackPanel Grid.Row="3" Orientation="Horizontal">
+                    <Button x:Name="btnCompleteTask" Content="Mark Complete"
+                    Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                    FontFamily="Consolas" Padding="6" Margin="0,0,10,0"
+                    Click="btnCompleteTask_Click"/>
+                    <Button x:Name="btnDeleteTask" Content="Delete"
+                    Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                    FontFamily="Consolas" Padding="6"
+                    Click="btnDeleteTask_Click"/>
+                </StackPanel>
+            </Grid>
+        </TabItem>
+
+    </TabControl>
 </Window>
