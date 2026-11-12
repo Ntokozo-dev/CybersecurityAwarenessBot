@@ -6,7 +6,6 @@ using System.Collections.Generic;
 
 namespace CybersecurityAwarenessChatbotGUI
 {
-   
     public partial class MainWindow : Window
     {
         // Fields: these stay alive as long as the window is open (not recreated on each click).
@@ -20,6 +19,9 @@ namespace CybersecurityAwarenessChatbotGUI
         // The chatbot "brain".
         private readonly ResponseHandler responseHandler = new ResponseHandler();
 
+        // Handles all MySQL reads/writes for the Task Assistant.
+        private readonly TaskDatabase taskDb = new TaskDatabase();
+
         // Colours for the chat: the user's messages are white, the bot's are light green.
         private readonly Brush userBrush = Brushes.White;
         private readonly Brush botBrush = Brushes.LightGreen;
@@ -28,8 +30,6 @@ namespace CybersecurityAwarenessChatbotGUI
         {
             // Builds the window from the XAML (auto-generated step).
             InitializeComponent();
-
-        
 
             // DELEGATE in use: we plug our DisplayBotMessage method into the chatbot.
             // When the chatbot has a reply, it calls this method without needing to know
@@ -59,6 +59,11 @@ namespace CybersecurityAwarenessChatbotGUI
 
             // Put the cursor in the input box so the user can start typing straight away.
             txtUserInput.Focus();
+
+            // Load any tasks already saved in the database into the Tasks tab.
+            RefreshTaskList();
+            //checks for reminders as soon as the app opens
+            CheckDueReminders();
         }
 
         // Runs every time the Send button is clicked (or Enter is pressed, because btnSend IsDefault).
@@ -141,6 +146,130 @@ namespace CybersecurityAwarenessChatbotGUI
 
             // Keep the newest message in view.
             rtbChatHistory.ScrollToEnd();
+        }
+
+        // ---------------------------------------------------------
+        // TASK ASSISTANT (Tasks tab) — reads and writes via TaskDatabase
+        // ---------------------------------------------------------
+
+        // Reusable method: clears and repopulates the task list display
+        // from the database, so it always shows the current state.
+        private void RefreshTaskList()
+        {
+            lstTasks.Items.Clear();
+            List<CyberTask> tasks = taskDb.GetAllTasks();
+
+            foreach (CyberTask task in tasks)
+            {
+                string status = task.IsCompleted ? "[DONE]" : "[PENDING]";
+                string reminderText = task.Reminder.HasValue
+                    ? task.Reminder.Value.ToShortDateString()
+                    : "No reminder";
+                lstTasks.Items.Add($"{status} ID:{task.TaskId} - {task.Title} | {task.Description} | {reminderText}");
+            }
+        }
+        // Checks all tasks for reminders that are due today or overdue,
+        // and shows a pop-up alert listing them.
+        private void CheckDueReminders()
+        {
+            List<CyberTask> tasks = taskDb.GetAllTasks();
+            List<string> dueTasks = new List<string>();
+
+            foreach (CyberTask task in tasks)
+            {
+                // Only check tasks that aren't already completed and actually have a reminder set.
+                if (!task.IsCompleted && task.Reminder.HasValue)
+                {
+                    // .Date strips the time portion, so we're comparing just the calendar day.
+                    if (task.Reminder.Value.Date <= DateTime.Today)
+                    {
+                        dueTasks.Add($"- {task.Title} (due {task.Reminder.Value.ToShortDateString()})");
+                    }
+                }
+            }
+
+            if (dueTasks.Count > 0)
+            {
+                string message = "You have reminders due:\n\n" + string.Join("\n", dueTasks);
+                MessageBox.Show(message, "Task Reminders", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+        }
+        // Runs when "Add Task" is clicked.
+        private void btnAddTask_Click(object sender, RoutedEventArgs e)
+        {
+            string title = txtTaskTitle.Text;
+            string description = txtTaskDescription.Text;
+            string reminderInput = txtTaskReminder.Text;
+
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                MessageBox.Show("Please enter a title for the task.");
+                return;
+            }
+
+            // Reminder is optional, so only try to parse it if something was typed.
+            DateTime? reminder = null;
+            if (!string.IsNullOrWhiteSpace(reminderInput))
+            {
+                if (DateTime.TryParse(reminderInput, out DateTime parsedDate))
+                {
+                    reminder = parsedDate;
+                }
+                else
+                {
+                    MessageBox.Show("Reminder date not recognised. Task added without a reminder.");
+                }
+            }
+
+            taskDb.AddTask(title, description, reminder);
+
+            // Clear the input fields and refresh the list to show the new task.
+            txtTaskTitle.Clear();
+            txtTaskDescription.Clear();
+            txtTaskReminder.Clear();
+            RefreshTaskList();
+        }
+
+        // Runs when "Mark Complete" is clicked.
+        private void btnCompleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstTasks.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a task first.");
+                return;
+            }
+
+            string selected = lstTasks.SelectedItem.ToString();
+            int taskId = ExtractTaskId(selected);
+
+            taskDb.CompleteTask(taskId);
+            RefreshTaskList();
+        }
+
+        // Runs when "Delete" is clicked.
+        private void btnDeleteTask_Click(object sender, RoutedEventArgs e)
+        {
+            if (lstTasks.SelectedItem == null)
+            {
+                MessageBox.Show("Please select a task first.");
+                return;
+            }
+
+            string selected = lstTasks.SelectedItem.ToString();
+            int taskId = ExtractTaskId(selected);
+
+            taskDb.DeleteTask(taskId);
+            RefreshTaskList();
+        }
+
+        // Helper: pulls the TaskId number out of the displayed list item text,
+        // since the ListBox only shows a formatted string, not the raw CyberTask object.
+        private int ExtractTaskId(string displayText)
+        {
+            int idIndex = displayText.IndexOf("ID:") + 3;
+            int spaceIndex = displayText.IndexOf(' ', idIndex);
+            string idText = displayText.Substring(idIndex, spaceIndex - idIndex);
+            return int.Parse(idText);
         }
     }
 }
