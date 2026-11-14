@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace CybersecurityAwarenessChatbotGUI
 {
@@ -64,6 +66,8 @@ namespace CybersecurityAwarenessChatbotGUI
             RefreshTaskList();
             //checks for reminders as soon as the app opens
             CheckDueReminders();
+            //load the first question when the app starts
+            LoadQuizQuestion();
         }
 
         // Runs every time the Send button is clicked (or Enter is pressed, because btnSend IsDefault).
@@ -271,5 +275,91 @@ namespace CybersecurityAwarenessChatbotGUI
             string idText = displayText.Substring(idIndex, spaceIndex - idIndex);
             return int.Parse(idText);
         }
+        // ---------------------------------------------------------
+        // QUIZ (Quiz tab) — runs through QuizManager
+        // ---------------------------------------------------------
+
+        private readonly QuizManager quizManager = new QuizManager();
+
+        // Displays the current question and builds radio buttons for its options.
+        private void LoadQuizQuestion()
+        {
+            QuizQuestion question = quizManager.GetCurrentQuestion();
+
+            if (question == null)
+            {
+                // No more questions — show the final score instead.
+                tbQuizQuestion.Text = "Quiz complete!";
+                spQuizOptions.Children.Clear();
+                tbQuizFeedback.Text = $"Your final score: {quizManager.GetScore()} / {quizManager.GetTotalQuestions()}";
+                btnQuizSubmit.IsEnabled = false;
+                return;
+            }
+
+            tbQuizQuestion.Text = question.QuestionText;
+            tbQuizFeedback.Text = "";
+
+            // Clear any previous question's options before adding new ones.
+            spQuizOptions.Children.Clear();
+
+            foreach (string option in question.Options)
+            {
+                RadioButton rb = new RadioButton
+                {
+                    Content = option,
+                    GroupName = "QuizOptions", // ensures only one option can be selected at a time
+                    Foreground = Brushes.LightGreen,
+                    FontFamily = new FontFamily("Consolas"),
+                    Margin = new Thickness(0, 5, 0, 5)
+                };
+                spQuizOptions.Children.Add(rb);
+            }
+        }
+        // Runs when "Submit Answer" is clicked.
+        private void btnQuizSubmit_Click(object sender, RoutedEventArgs e)
+        {
+            // Find which RadioButton (if any) is currently selected.
+            string selectedAnswer = null;
+            foreach (var child in spQuizOptions.Children)
+            {
+                if (child is RadioButton rb && rb.IsChecked == true)
+                {
+                    selectedAnswer = rb.Content.ToString();
+                    break;
+                }
+            }
+
+            if (selectedAnswer == null)
+            {
+                MessageBox.Show("Please select an answer before submitting.");
+                return;
+            }
+
+            QuizAnswerResult result = quizManager.SubmitAnswer(selectedAnswer);
+
+            // Immediate feedback, as required by the brief.
+            tbQuizFeedback.Text = result.IsCorrect
+                ? "Correct!"
+                : $"Incorrect. The correct answer was: {result.CorrectAnswer}";
+
+            // Disable the Submit button and radio buttons briefly so the user
+            // can't click through before actually reading the feedback.
+            btnQuizSubmit.IsEnabled = false;
+            foreach (var child in spQuizOptions.Children)
+            {
+                if (child is RadioButton rb) rb.IsEnabled = false;
+            }
+
+            // Wait 1.5 seconds, then load the next question.
+            DispatcherTimer timer = new DispatcherTimer();
+            timer.Interval = TimeSpan.FromSeconds(1.5);
+            timer.Tick += (s, args) =>
+            {
+                timer.Stop(); // stop this specific timer so it only fires once
+                LoadQuizQuestion();
+                btnQuizSubmit.IsEnabled = true;
+            };
+            timer.Start();
+        }
     }
-}
+  }

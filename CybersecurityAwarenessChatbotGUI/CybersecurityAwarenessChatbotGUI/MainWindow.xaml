@@ -129,5 +129,40 @@
             </Grid>
         </TabItem>
 
+        <!-- TAB 3: Quiz -->
+        <TabItem Header="Quiz">
+            <Grid Margin="10">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- question text -->
+                    <RowDefinition Height="*"/>
+                    <!-- answer options -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- feedback text -->
+                    <RowDefinition Height="Auto"/>
+                    <!-- submit button -->
+                </Grid.RowDefinitions>
+
+                <TextBlock x:Name="tbQuizQuestion" Grid.Row="0"
+                   Text="Question goes here" Foreground="Cyan"
+                   FontFamily="Consolas" FontSize="16" FontWeight="Bold"
+                   TextWrapping="Wrap" Margin="0,0,0,15"/>
+
+                <!-- Options are added here dynamically from code, since the
+             number of choices differs between MCQ (4) and True/False (2). -->
+                <StackPanel x:Name="spQuizOptions" Grid.Row="1"/>
+
+                <TextBlock x:Name="tbQuizFeedback" Grid.Row="2"
+                   Foreground="Yellow" FontFamily="Consolas"
+                   TextWrapping="Wrap" Margin="0,10,0,10"/>
+
+                <Button x:Name="btnQuizSubmit" Grid.Row="3" Content="Submit Answer"
+                Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                FontFamily="Consolas" FontWeight="Bold" Padding="6"
+                HorizontalAlignment="Left" Click="btnQuizSubmit_Click"/>
+            </Grid>
+        </TabItem>
+
+
     </TabControl>
 </Window>
