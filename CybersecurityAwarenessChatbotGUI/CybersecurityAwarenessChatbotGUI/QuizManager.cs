@@ -47,6 +47,12 @@ namespace CybersecurityAwarenessChatbotGUI
             currentIndex++;
             return result;
         }
+        // Resets the quiz back to the beginning, so it can be played again.
+        public void Reset()
+        {
+            currentIndex = 0;
+            score = 0;
+        }
 
         public bool IsFinished()
         {
