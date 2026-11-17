@@ -4,7 +4,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Documents;
 using System.Windows.Media;
-using System.Windows.Threading;
 
 namespace CybersecurityAwarenessChatbotGUI
 {
@@ -27,6 +26,9 @@ namespace CybersecurityAwarenessChatbotGUI
         // Colours for the chat: the user's messages are white, the bot's are light green.
         private readonly Brush userBrush = Brushes.White;
         private readonly Brush botBrush = Brushes.LightGreen;
+
+        // Detects what the user wants based on typed input (e.g. "start quiz").
+        private readonly IntentRecognizer intentRecognizer = new IntentRecognizer();
 
         public MainWindow()
         {
@@ -66,9 +68,10 @@ namespace CybersecurityAwarenessChatbotGUI
             RefreshTaskList();
             //checks for reminders as soon as the app opens
             CheckDueReminders();
-            //load the first question when the app starts
-            LoadQuizQuestion();
+            
         }
+
+
 
         // Runs every time the Send button is clicked (or Enter is pressed, because btnSend IsDefault).
         private void btnSend_Click(object sender, RoutedEventArgs e)
@@ -94,11 +97,34 @@ namespace CybersecurityAwarenessChatbotGUI
             }
             else
             {
-                // Hand the message to the chatbot. The reply comes back through the delegate.
-                responseHandler.ProcessInput(input, user.Name);
+                // NLP SIMULATION: figure out what the user actually wants.
+                UserIntent intent = intentRecognizer.DetectIntent(input);
+
+                switch (intent)
+                {
+                    case UserIntent.StartQuiz:
+                        DisplayBotMessage("Sure — switching you to the Quiz tab!");
+                        QuizTabItem.IsSelected = true; // switches the active tab
+                        break;
+
+                    case UserIntent.ShowTasks:
+                        DisplayBotMessage("Here are your tasks — switching to the Tasks tab.");
+                        TasksTabItem.IsSelected = true;
+                        RefreshTaskList();
+                        break;
+
+                    case UserIntent.AddTask:
+                        DisplayBotMessage("Let's add a task — switching to the Tasks tab so you can fill in the details.");
+                        TasksTabItem.IsSelected = true;
+                        break;
+
+                    default:
+                        // Fall back to your existing cybersecurity response logic.
+                        responseHandler.ProcessInput(input, user.Name);
+                        break;
+                }
             }
 
-            // Clear the box and keep the cursor there, ready for the next message.
             txtUserInput.Clear();
             txtUserInput.Focus();
         }
@@ -281,6 +307,15 @@ namespace CybersecurityAwarenessChatbotGUI
 
         private readonly QuizManager quizManager = new QuizManager();
 
+        // Runs when "Start Quiz" is clicked.
+        private void btnQuizStart_Click(object sender, RoutedEventArgs e)
+        {
+            quizManager.Reset();
+            btnQuizStart.IsEnabled = false;
+            btnQuizSubmit.IsEnabled = true;
+            LoadQuizQuestion();
+        }
+
         // Displays the current question and builds radio buttons for its options.
         private void LoadQuizQuestion()
         {
@@ -288,18 +323,12 @@ namespace CybersecurityAwarenessChatbotGUI
 
             if (question == null)
             {
-                // No more questions — show the final score instead.
-                tbQuizQuestion.Text = "Quiz complete!";
-                spQuizOptions.Children.Clear();
-                tbQuizFeedback.Text = $"Your final score: {quizManager.GetScore()} / {quizManager.GetTotalQuestions()}";
-                btnQuizSubmit.IsEnabled = false;
+                ShowFinalScore();
                 return;
             }
 
             tbQuizQuestion.Text = question.QuestionText;
             tbQuizFeedback.Text = "";
-
-            // Clear any previous question's options before adding new ones.
             spQuizOptions.Children.Clear();
 
             foreach (string option in question.Options)
@@ -307,18 +336,22 @@ namespace CybersecurityAwarenessChatbotGUI
                 RadioButton rb = new RadioButton
                 {
                     Content = option,
-                    GroupName = "QuizOptions", // ensures only one option can be selected at a time
+                    GroupName = "QuizOptions",
                     Foreground = Brushes.LightGreen,
                     FontFamily = new FontFamily("Consolas"),
                     Margin = new Thickness(0, 5, 0, 5)
                 };
                 spQuizOptions.Children.Add(rb);
             }
+
+            btnQuizSubmit.IsEnabled = true;
+            btnQuizNext.IsEnabled = false;
         }
-        // Runs when "Submit Answer" is clicked.
+
+        // Runs when "Submit Answer" is clicked: checks the answer, shows feedback,
+        // but does NOT move to the next question — that's a separate step now.
         private void btnQuizSubmit_Click(object sender, RoutedEventArgs e)
         {
-            // Find which RadioButton (if any) is currently selected.
             string selectedAnswer = null;
             foreach (var child in spQuizOptions.Children)
             {
@@ -337,29 +370,44 @@ namespace CybersecurityAwarenessChatbotGUI
 
             QuizAnswerResult result = quizManager.SubmitAnswer(selectedAnswer);
 
-            // Immediate feedback, as required by the brief.
             tbQuizFeedback.Text = result.IsCorrect
                 ? "Correct!"
                 : $"Incorrect. The correct answer was: {result.CorrectAnswer}";
 
-            // Disable the Submit button and radio buttons briefly so the user
-            // can't click through before actually reading the feedback.
+            // Lock in this answer: disable Submit and the radio buttons,
+            // enable Next so the user moves on when they're ready.
             btnQuizSubmit.IsEnabled = false;
             foreach (var child in spQuizOptions.Children)
             {
                 if (child is RadioButton rb) rb.IsEnabled = false;
             }
+            btnQuizNext.IsEnabled = true;
+        }
 
-            // Wait 1.5 seconds, then load the next question.
-            DispatcherTimer timer = new DispatcherTimer();
-            timer.Interval = TimeSpan.FromSeconds(1.5);
-            timer.Tick += (s, args) =>
-            {
-                timer.Stop(); // stop this specific timer so it only fires once
-                LoadQuizQuestion();
-                btnQuizSubmit.IsEnabled = true;
-            };
-            timer.Start();
+        // Runs when "Next Question" is clicked.
+        private void btnQuizNext_Click(object sender, RoutedEventArgs e)
+        {
+            LoadQuizQuestion();
+        }
+
+        // Shows the final score once all questions are done, out of 100 (percentage).
+        private void ShowFinalScore()
+        {
+            int correct = quizManager.GetScore();
+            int total = quizManager.GetTotalQuestions();
+
+            // Convert raw score (e.g. 9/12) into a percentage out of 100.
+            double percentage = (double)correct / total * 100;
+
+            tbQuizQuestion.Text = "Quiz complete!";
+            spQuizOptions.Children.Clear();
+            tbQuizFeedback.Text = $"You scored {correct}/{total} — {percentage:F1}/100";
+
+            btnQuizSubmit.IsEnabled = false;
+            btnQuizNext.IsEnabled = false;
+            btnQuizStart.IsEnabled = true; // allow retaking the quiz
+            btnQuizStart.Content = "Retake Quiz";
         }
     }
-  }
+}
+  

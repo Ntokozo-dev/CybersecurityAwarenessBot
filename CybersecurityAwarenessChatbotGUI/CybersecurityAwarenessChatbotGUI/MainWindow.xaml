@@ -12,7 +12,7 @@
     <TabControl Background="#0B0F14">
 
         <!-- TAB 1: chat interface -->
-        <TabItem Header="Chat">
+        <TabItem x:Name="ChatTabItem" Header="Chat">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -74,7 +74,7 @@
         </TabItem>
 
         <!-- TAB 2: Task Assistant -->
-        <TabItem Header="Tasks">
+        <TabItem x:Name="TasksTabItem" Header="Tasks">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -130,9 +130,11 @@
         </TabItem>
 
         <!-- TAB 3: Quiz -->
-        <TabItem Header="Quiz">
+        <TabItem x:Name="QuizTabItem" Header="Quiz">
             <Grid Margin="10">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <!-- Start button -->
                     <RowDefinition Height="Auto"/>
                     <!-- question text -->
                     <RowDefinition Height="*"/>
@@ -140,26 +142,38 @@
                     <RowDefinition Height="Auto"/>
                     <!-- feedback text -->
                     <RowDefinition Height="Auto"/>
-                    <!-- submit button -->
+                    <!-- Submit / Next buttons -->
                 </Grid.RowDefinitions>
+                <Button x:Name="btnQuizStart" Grid.Row="0" Content="Start Quiz"
+                Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                FontFamily="Consolas" FontWeight="Bold" Padding="6"
+                HorizontalAlignment="Left" Margin="0,0,0,15"
+                Click="btnQuizStart_Click"/>
 
-                <TextBlock x:Name="tbQuizQuestion" Grid.Row="0"
-                   Text="Question goes here" Foreground="Cyan"
+                <TextBlock x:Name="tbQuizQuestion" Grid.Row="1"
+                   Text="" Foreground="Cyan"
                    FontFamily="Consolas" FontSize="16" FontWeight="Bold"
                    TextWrapping="Wrap" Margin="0,0,0,15"/>
 
-                <!-- Options are added here dynamically from code, since the
-             number of choices differs between MCQ (4) and True/False (2). -->
-                <StackPanel x:Name="spQuizOptions" Grid.Row="1"/>
+                <StackPanel x:Name="spQuizOptions" Grid.Row="2"/>
 
-                <TextBlock x:Name="tbQuizFeedback" Grid.Row="2"
+                <TextBlock x:Name="tbQuizFeedback" Grid.Row="3"
                    Foreground="Yellow" FontFamily="Consolas"
                    TextWrapping="Wrap" Margin="0,10,0,10"/>
 
-                <Button x:Name="btnQuizSubmit" Grid.Row="3" Content="Submit Answer"
-                Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
-                FontFamily="Consolas" FontWeight="Bold" Padding="6"
-                HorizontalAlignment="Left" Click="btnQuizSubmit_Click"/>
+                <StackPanel Grid.Row="4" Orientation="Horizontal">
+                    <Button x:Name="btnQuizSubmit" Content="Submit Answer"
+                    Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                    FontFamily="Consolas" FontWeight="Bold" Padding="6"
+                    Margin="0,0,10,0" IsEnabled="False"
+                    Click="btnQuizSubmit_Click"/>
+
+                    <Button x:Name="btnQuizNext" Content="Next Question"
+                    Background="#12303A" Foreground="Cyan" BorderBrush="#1F6F5C"
+                    FontFamily="Consolas" FontWeight="Bold" Padding="6"
+                    IsEnabled="False"
+                    Click="btnQuizNext_Click"/>
+                </StackPanel>
             </Grid>
         </TabItem>
 
