@@ -1,4 +1,4 @@
-# PROG6221 Programming 2A - POE Part 2
+# PROG6221 Cybersecurity Awareness Chatbot - Final POE
 
 ## Student Details
 
@@ -6,163 +6,93 @@
 - **Student number:** ST10498443
 - **Module:** PROG6221 Programming 2A
 - **Repository:** https://github.com/Ntokozo-dev/CybersecurityAwarenessBot
+- **Lecturer:** Ms A Phewa
 
 ## Project Overview
+This is a WPF desktop application: a Cybersecurity Awareness Assistant that combines the work from Parts 1, 2 and 3. Users can chat about cybersecurity topics, manage cybersecurity tasks with reminders (stored in MySQL), take a cybersecurity quiz, give natural-language commands, and review a log of their recent actions.
 
-The Cybersecurity Awareness Bot teaches users safe digital habits. **Part 1** was a command-line chatbot with a voice greeting, ASCII art, name capture and basic answers. **Part 2** (this version) turns it into a **WPF graphical application** and adds keyword recognition, random responses, conversation flow, memory, sentiment detection and error handling.
+## Final Features
 
-All Part 1 features were carried into the GUI:
+### Part 1
+- Voice greeting on start-up
+- ASCII art banner
+- Basic cybersecurity interaction
+- Name capture with input validation
 
-| Part 1 feature | How it works in Part 2 |
+### Part 2
+- WPF GUI with a chat history window
+- Keyword recognition across cybersecurity topics (passwords, phishing, privacy, scams)
+- Random responses so answers vary
+- Conversation flow, memory and recall (`MemoryStore`)
+- Sentiment detection (`SentimentDetector`)
+- Delegate used to pass chatbot replies to the GUI
 
-| Voice greeting | `greeting.wav` plays when the window first loads (non-blocking, so the window stays responsive) |
-| ASCII art | Displayed in a bordered banner at the top of the window |
-| User name | Asked for on startup, validated by `UserProfile`, used in later replies |
-| Basic responses | Expanded into dictionary-based keyword responses plus small talk ("how are you", "what is your purpose") |
-| Input validation | Blank or unrecognised input gets a helpful message, never a crash |
+### Part 3
+- **Task Assistant (MySQL):** add tasks with a title, description and optional reminder date; view, complete and delete tasks. All changes are saved to MySQL and the list always reloads from the database.
+- **Reminders:** tasks whose reminder is due or overdue are shown in a pop-up when the application opens.
+- **Cybersecurity Quiz:** one question at a time, immediate feedback on every answer, and a final score shown as a percentage, with a retake option.
+- **NLP simulation:** simple string and phrase matching (`IntentRecognizer`) so different wordings reach the same feature. Tasks can be created straight from chat, including a reminder date ("tomorrow", "today", "next week", "in 3 days").
+- **Activity Log:** records tasks, reminders, quiz activity and NLP commands. The tab shows the 5 most recent actions, with **Show More** for the last 10. It refreshes automatically as actions happen.
 
-## Part 2 Features
+## Technologies
+- C# / .NET, WPF
+- MySQL 8.0
+- Visual Studio 2022
 
-- **Keyword recognition:** finds cybersecurity topics inside normal sentences, in any letter case.
-- **Random responses:** each topic has several tips, and one is chosen at random (never the same tip twice in a row).
-- **Conversation flow:** follow-ups such as "tell me more" or "give me another tip" continue the current topic.
-- **Memory and recall:** remembers the user's name, favourite topic and the topics discussed.
-- **Sentiment detection:** recognises worried, frustrated, unsure and curious wording, then responds with empathy **and** a useful tip in the same reply.
-- **Error handling:** blank input and unknown input produce friendly messages.
-- **Enter key support:** pressing Enter sends the message.
+## Database Setup
+1. Install and start MySQL Server (MySQL Workbench is useful for checking the data).
+2. Run the SQL below to create the database and table (also provided as `database_setup.sql` if included in the repository):
 
-## GUI Overview
+   ```sql
+   CREATE DATABASE IF NOT EXISTS cybersecurity_db;
+   USE cybersecurity_db;
 
-| Control | Name | Purpose |
+   CREATE TABLE IF NOT EXISTS tasks (
+       TaskId      INT NOT NULL AUTO_INCREMENT,
+       Title       VARCHAR(100) NOT NULL,
+       Description VARCHAR(255) DEFAULT NULL,
+       Reminder    DATETIME DEFAULT NULL,
+       IsCompleted TINYINT(1) DEFAULT 0,
+       PRIMARY KEY (TaskId)
+   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+   ```
+3. Open `TaskDatabase.cs` and replace `YOUR_PASSWORD` in the connection string with your local MySQL password.
+   > Do not commit a real password to a public repository. The submitted code uses a placeholder.
+4. Build and run the application in Visual Studio (**F5**).
 
-| Label | `lblTitle` | Application title |
-| Banner | `tbBanner` | ASCII art identity (carried over from Part 1) |
-| RichTextBox | `rtbChatHistory` | Read-only conversation: user messages in white, bot messages in green |
-| TextBox | `txtUserInput` | Where the user types |
-| Button | `btnSend` | Sends the message (also triggered by Enter) |
+## How to Use
+- **Chat tab:** enter your name, then ask about cybersecurity topics or type a command.
+- **Tasks tab:** type a title, description and optional reminder date, then click **Add Task**. Select a task to **Mark Complete** or **Delete** it.
+- **Quiz tab:** click **Start Quiz**, choose an answer, click **Submit Answer**, then **Next Question**. Your score appears at the end.
+- **Activity Log tab:** shows recent actions. Use **Refresh** for the last 5 and **Show More** for the last 10.
 
-The interface uses a dark terminal theme (dark background, cyan and green text, monospaced font).
-
-## Cybersecurity Topics Supported
-
-The bot recognises these topics, each with four different tips:
-
-1. Passwords
-2. Phishing
-3. Scams
-4. Privacy
-5. Safe browsing
-6. Two-factor authentication
-7. Malware
-
-Each topic is detected by several keywords, for example the passwords topic reacts to "password", "passphrase" and "passcode".
-
-## Memory and Sentiment Features
-
-**Memory**
-- Say *"My name is Sam"* (or just *"Sam"*) and the bot uses your name in later replies.
-- Say *"I am interested in privacy"* and the bot stores privacy as your favourite topic. Later, when you ask about other topics, it adds a personalised reminder such as *"As someone interested in privacy, you might want to review the security settings on your accounts."*
-- Ask *"What do you remember?"* to see your name, favourite topic and the topics discussed so far.
-
-**Sentiment**
-- Detected moods: worried, frustrated, unsure, curious.
-- The bot opens with a supportive sentence, then gives a tip straight away. The user never has to ask twice.
-
-## How to Run the Project
-
-**Requirements**
-- Windows 10 or 11 (WPF is Windows-only)
-- Visual Studio 2022 with the **.NET desktop development** workload
-- .NET 8 SDK
-- Speakers or headphones for the voice greeting
-
-**Steps**
-1. Clone the repository: `git clone https://github.com/Ntokozo-dev/CybersecurityAwarenessBot.git`
-2. Open **`CybersecurityAwarenessChatbotGUI.sln`** in Visual Studio.
-3. In Solution Explorer, make sure **CybersecurityAwarenessChatbotGUI** is the startup project (right-click it, then *Set as Startup Project*).
-4. Press **F5** (or Ctrl + F5) to build and run.
-5. The window opens and the voice greeting plays. Type your name and click **Send** (or press Enter).
-
-No file paths need changing. `greeting.wav` is part of the project and is copied next to the program when it builds.
-
-## Usage Examples
-
-Replies are random, so the exact wording of tips will vary.
-
-```
-Bot: What is your name?
-You: My name is Sam
-Bot: Nice to meet you, Sam! Ask me about passwords, phishing, scams, privacy, safe browsing, two-factor authentication or malware.
-
-You: Tell me about password safety
-Bot: Aim for long passphrases (four or more random words) rather than short, complicated passwords.
-
-You: Tell me more
-Bot: Sure! More on passwords: Use a strong, unique password for every account so one leak can't unlock everything.
-
-You: I am interested in privacy
-Bot: Great! I'll remember that you're interested in privacy. Here's a first tip: ...
-
-You: I'm worried about scams
-Bot: It's completely understandable to feel worried about scams, Sam. Let me share a tip to help you stay safe. ...
-
-You: What do you remember?
-Bot: Your name is Sam. You're interested in privacy. So far we've talked about passwords, privacy, scams.
-```
-
-**Suggested test inputs**
-
-| Test input | Expected result |
+### Example chat commands
+| You type | What happens |
 |---|---|
-| `Tell me about password safety` | Password tip |
-| `I received a scam message` | Scam tip |
-| `HOW DO I CREATE A PASSWORD?` | Password tip (capital letters ignored) |
-| `Give me another tip` / `Tell me more` | Another tip on the same topic |
-| `I am worried about scams` | Empathy plus scam tip |
-| `I am frustrated with scam messages` | Support plus scam tip |
-| Click Send with an empty box | Helpful message, no crash |
-| `blah blah` | Friendly "try rephrasing" message |
+| Add a task to review my privacy settings | Task is saved to the database |
+| Remind me to update my password tomorrow | Task is saved with tomorrow's date as the reminder |
+| Show my tasks | Switches to the Tasks tab |
+| Start the cyber quiz | Switches to the Quiz tab |
+| What have you done for me? | Switches to the Activity Log tab |
+| Tell me about phishing | Normal chatbot response |
 
 ## Project Structure
-
-```
-CybersecurityAwarenessBot/
-|-- .github/workflows/          GitHub Actions (.NET CI)
-|-- README.md
-|-- CybersecurityAwarenessChatbotGUI/   Part 2 WPF project
-|   |-- AsciiArt.cs                     ASCII art (from Part 1)
-|   `-- greeting.wav                    Voice greeting audio
-|   |-- KeywordResponder.cs             Dictionaries: keywords, tips, small talk
-|   |-- MainWindow.xaml                 GUI layout
-|   |-- MainWindow.xaml.cs              GUI events (reads input, shows messages)
-|   |-- MemoryStore.cs                  Favourite topic, current topic, topics discussed
-|   |-- ResponseHandler.cs              Chatbot logic, uses a delegate to send replies
-|   |-- SentimentDetector.cs            Mood detection and empathetic openings
-|   |-- TextHelper.cs                   Shared text-matching helpers
-|   |-- UserProfile.cs                  Stores and validates the user's name (from Part 1)
-|   |-- VoiceGreeting.cs                Plays the WAV greeting (from Part 1)
-
-### Technical notes
-
-- **Collections:** `Dictionary<string, List<string>>` stores topic keywords and responses, so adding a topic means adding data, not new `if` statements.
-- **Random selection:** one `Random` object is created per class and reused, and the last tip is remembered so tips don't repeat back to back.
-- **Delegate:** `BotMessageHandler` is declared in `ResponseHandler.cs`. The window plugs its `DisplayBotMessage` method into it, so the chatbot logic can send a reply without knowing how the window displays it.
-- **Separation of concerns:** the window only handles the GUI; keyword, sentiment and memory logic live in their own classes.
-
-## GitHub / CI Information
-
-- GitHub Actions workflow **.NET CI** builds the project on every push.
-- Commits follow the development order: project setup, GUI layout, Part 1 migration, keyword recognition, random responses, memory, sentiment, error handling, README.
-- Check the **Actions** tab for the latest run.
-
-## Tags and Releases
-
-| Tag | Description |
+| File | Purpose |
 |---|---|
-| `v2.0-gui` | Part 2 GUI created and Part 1 features migrated |
-| `v2.1-dynamic-responses` | Keyword recognition, random responses and conversation flow |
-| `v2.2-memory-sentiment` | Memory, sentiment detection, validation and final polish |
-| `v2.3-final` | Ascii banner editing
+| `MainWindow.xaml` / `MainWindow.xaml.cs` | GUI layout and event handling for all tabs |
+| `UserProfile.cs`, `ResponseHandler.cs` | Part 1 classes reused in the GUI |
+| `KeywordResponder.cs`, `MemoryStore.cs`, `SentimentDetector.cs`, `TextHelper.cs` | Part 2 chatbot logic |
+| `TaskDatabase.cs`, `CyberTask.cs` | MySQL access and the task model |
+| `QuizManager.cs`, `QuizQuestion.cs`, `QuizAnswerResult.cs` | Quiz logic and models |
+| `UserIntent.cs` | `UserIntent` enum and `IntentRecognizer` (NLP simulation) |
+| `ActivityLogger.cs`, `ActivityEntry.cs` | Activity Log |
+| `AsciiArt.cs`, `VoiceGreeting.cs` | Part 1 greeting features |
 
-## Video Presentation Link
-https://youtu.be/8VRtIs2E8Ts?si=8bwCmUAZiUA-MBZ9
+## Releases
+- `v1.0-part1`
+- `v2.0-part2`
+- `v3.0-final`
+
+## Video Presentation
+YOUTUBE LINK HERE (unlisted)
+
