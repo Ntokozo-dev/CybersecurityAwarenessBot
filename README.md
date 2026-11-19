@@ -57,7 +57,6 @@ This is a WPF desktop application: a Cybersecurity Awareness Assistant that comb
    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
    ```
 3. Open `TaskDatabase.cs` and replace `YOUR_PASSWORD` in the connection string with your local MySQL password.
-   > Do not commit a real password to a public repository. The submitted code uses a placeholder.
 4. Build and run the application in Visual Studio (**F5**).
 
 ## How to Use
