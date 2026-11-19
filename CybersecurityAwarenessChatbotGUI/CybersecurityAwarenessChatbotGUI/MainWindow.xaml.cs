@@ -30,6 +30,9 @@ namespace CybersecurityAwarenessChatbotGUI
         // Detects what the user wants based on typed input (e.g. "start quiz").
         private readonly IntentRecognizer intentRecognizer = new IntentRecognizer();
 
+        //stores every meaningful action(tasks, reminders, quiz and NLP commands)
+        private readonly ActivityLogger activityLogger = new ActivityLogger();
+
         public MainWindow()
         {
             // Builds the window from the XAML (auto-generated step).
@@ -66,9 +69,11 @@ namespace CybersecurityAwarenessChatbotGUI
 
             // Load any tasks already saved in the database into the Tasks tab.
             RefreshTaskList();
+            // Shows "No activity recorded yet." in the Activity Log tab until something is logged.
+            DisplayRecentActivity(5);
             //checks for reminders as soon as the app opens
             CheckDueReminders();
-            
+
         }
 
 
@@ -105,17 +110,26 @@ namespace CybersecurityAwarenessChatbotGUI
                     case UserIntent.StartQuiz:
                         DisplayBotMessage("Sure — switching you to the Quiz tab!");
                         QuizTabItem.IsSelected = true; // switches the active tab
+                        LogAction("NLP recognised start-quiz request");
                         break;
 
                     case UserIntent.ShowTasks:
                         DisplayBotMessage("Here are your tasks — switching to the Tasks tab.");
                         TasksTabItem.IsSelected = true;
                         RefreshTaskList();
+                        LogAction("NLP recognised show-tasks request");
                         break;
 
                     case UserIntent.AddTask:
-                        DisplayBotMessage("Let's add a task — switching to the Tasks tab so you can fill in the details.");
-                        TasksTabItem.IsSelected = true;
+                        // Creates the task straight from the chat message (title + optional reminder).
+                        AddTaskFromChat(input);
+                        break;
+
+                    case UserIntent.ShowActivityLog:
+                        DisplayBotMessage("Here is your recent activity — switching to the Activity Log tab.");
+                        // Log first so this request itself appears (LogAction also refreshes the list).
+                        LogAction("NLP recognised activity-log request");
+                        ActivityTabItem.IsSelected = true;
                         break;
 
                     default:
@@ -253,6 +267,13 @@ namespace CybersecurityAwarenessChatbotGUI
 
             taskDb.AddTask(title, description, reminder);
 
+            // Record the new task (and its reminder, if one was set) in the Activity Log.
+            LogAction($"Task added: {title}");
+            if (reminder.HasValue)
+            {
+                LogAction($"Reminder set: {title} - {reminder.Value:dd MMM yyyy}");
+            }
+
             // Clear the input fields and refresh the list to show the new task.
             txtTaskTitle.Clear();
             txtTaskDescription.Clear();
@@ -273,6 +294,7 @@ namespace CybersecurityAwarenessChatbotGUI
             int taskId = ExtractTaskId(selected);
 
             taskDb.CompleteTask(taskId);
+            LogAction($"Task completed: {ExtractTaskTitle(selected)}");
             RefreshTaskList();
         }
 
@@ -289,6 +311,7 @@ namespace CybersecurityAwarenessChatbotGUI
             int taskId = ExtractTaskId(selected);
 
             taskDb.DeleteTask(taskId);
+            LogAction($"Task deleted: {ExtractTaskTitle(selected)}");
             RefreshTaskList();
         }
 
@@ -300,6 +323,15 @@ namespace CybersecurityAwarenessChatbotGUI
             int spaceIndex = displayText.IndexOf(' ', idIndex);
             string idText = displayText.Substring(idIndex, spaceIndex - idIndex);
             return int.Parse(idText);
+        }
+
+        // Helper: pulls the task title out of the displayed list item text
+        // (format is "[STATUS] ID:n - Title | Description | Reminder"), for the Activity Log.
+        private string ExtractTaskTitle(string displayText)
+        {
+            int start = displayText.IndexOf(" - ") + 3;
+            int end = displayText.IndexOf(" | ", start);
+            return displayText.Substring(start, end - start);
         }
         // ---------------------------------------------------------
         // QUIZ (Quiz tab) — runs through QuizManager
@@ -313,6 +345,7 @@ namespace CybersecurityAwarenessChatbotGUI
             quizManager.Reset();
             btnQuizStart.IsEnabled = false;
             btnQuizSubmit.IsEnabled = true;
+            LogAction("Cybersecurity quiz started");
             LoadQuizQuestion();
         }
 
@@ -403,11 +436,95 @@ namespace CybersecurityAwarenessChatbotGUI
             spQuizOptions.Children.Clear();
             tbQuizFeedback.Text = $"You scored {correct}/{total} — {percentage:F1}/100";
 
+            LogAction($"Quiz completed - score {correct}/{total}");
+
             btnQuizSubmit.IsEnabled = false;
             btnQuizNext.IsEnabled = false;
             btnQuizStart.IsEnabled = true; // allow retaking the quiz
             btnQuizStart.Content = "Retake Quiz";
         }
+
+        // ---------------------------------------------------------
+        // ACTIVITY LOG (Activity Log tab) — reads from ActivityLogger
+        // ---------------------------------------------------------
+
+        // Clears the list box, then shows the most recent 'count' actions.
+        // Shows a friendly message if nothing has been logged yet.
+        private void DisplayRecentActivity(int count)
+        {
+            lstActivity.Items.Clear();
+
+            List<ActivityEntry> recent = activityLogger.GetRecent(count);
+
+            if (recent.Count == 0)
+            {
+                lstActivity.Items.Add("No activity recorded yet.");
+                return;
+            }
+
+            foreach (ActivityEntry entry in recent)
+            {
+                lstActivity.Items.Add(entry.ToString());
+            }
+        }
+
+        // Shows the 5 most recent actions.
+        private void btnRefreshActivity_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayRecentActivity(5);
+        }
+
+        // Shows the 10 most recent actions.
+        private void btnShowMore_Click(object sender, RoutedEventArgs e)
+        {
+            DisplayRecentActivity(10);
+        }
+
+        // Records an action in the log, then refreshes the Activity Log tab
+        // so the list is always up to date without pressing Refresh.
+        private void LogAction(string description)
+        {
+            activityLogger.Log(description);
+            DisplayRecentActivity(5);
+        }
+
+        // Adds a task straight from a chat message, e.g.
+        // "Add a task to enable two-factor authentication" or
+        // "Remind me to update my password tomorrow".
+        private void AddTaskFromChat(string input)
+        {
+            string title = intentRecognizer.ExtractTaskTitle(input);
+            DateTime? reminder = intentRecognizer.ExtractReminderDate(input);
+
+            // Nothing left after removing the command words, e.g. the user only typed "add a task".
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                DisplayBotMessage("I recognised that you want to add a task, but I need the task details. " +
+                                  "Try: Add a task to review my privacy settings.");
+                return;
+            }
+
+            try
+            {
+                taskDb.AddTask(title, "Task created from chatbot conversation.", reminder);
+            }
+            catch (Exception ex)
+            {
+                DisplayBotMessage("Sorry, I couldn't save that task: " + ex.Message);
+                return;
+            }
+
+            LogAction($"Task added through chatbot: {title}");
+            if (reminder.HasValue)
+            {
+                LogAction($"Reminder set: {title} - {reminder.Value:dd MMM yyyy}");
+            }
+
+            RefreshTaskList();
+
+            DisplayBotMessage(reminder.HasValue
+                ? $"Done! I've added the task \"{title}\" with a reminder for {reminder.Value:dd MMM yyyy}."
+                : $"Done! I've added the task \"{title}\".");
+        }
     }
 }
-  
