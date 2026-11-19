@@ -93,5 +93,6 @@ This is a WPF desktop application: a Cybersecurity Awareness Assistant that comb
 - `v3.0-final`
 
 ## Video Presentation
-YOUTUBE LINK HERE (unlisted)
+https://youtu.be/2sFrvtgRteM
+
 
